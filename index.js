@@ -16,6 +16,9 @@ app.get("/notes", function(req, res) {
 app.get("/api/notes", function(req, res) {
     res.json(JSON.parse(fs.readFileSync(path.join(__dirname, "db/db.json"), 'utf8')));
   });
+app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "public/index.html"));
+  });
 //post
 app.post("/api/notes", function(req, res) {
   const newNote = req.body;
@@ -47,9 +50,6 @@ app.delete("/api/notes/:id", function(req, res) {
   });
   res.sendFile(path.join(__dirname, "public/notes.html"));
 });
-app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "public/index.html"));
-  });
 app.listen(PORT, function() {
     console.log("App listening on PORT " + PORT);
   });  
