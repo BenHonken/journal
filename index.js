@@ -32,8 +32,8 @@ app.post("/api/notes", function(req, res) {
 });
 //delete
 app.delete("/api/notes/:id", function(req, res) {
-  const targetNote = req.body;
-  notes.splice(targetNote.id, 1);
+  const targetNote = parseInt(req.params.id);
+  notes.splice(targetNote, 1);
   for(let i = 0; i < notes.length; i++){
     notes[i].id = i;
   }
@@ -44,6 +44,7 @@ app.delete("/api/notes/:id", function(req, res) {
     }
     console.log("The file was deleted!");
   });
+  res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
