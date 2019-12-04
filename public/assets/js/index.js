@@ -28,7 +28,7 @@ var saveNote = function(note) {
 var deleteNote = function(id) {
   return $.ajax({
     url: "api/notes/" + id,
-    data: id,
+    data: "id="+ id,
     method: "DELETE"
   });
 };

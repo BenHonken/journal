@@ -32,7 +32,8 @@ app.post("/api/notes", function(req, res) {
 });
 //delete
 app.delete("/api/notes/:id", function(req, res) {
-  const targetNote = parseInt(req.params.id);
+  console.log(req);
+  const targetNote = parseInt(req.body.id);
   notes.splice(targetNote, 1);
   for(let i = 0; i < notes.length; i++){
     notes[i].id = i;
