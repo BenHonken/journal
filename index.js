@@ -1,26 +1,53 @@
-var express = require("express");
-var path = require("path");
-var fs = require("fs");
-var axios = require("axios");
-var app = express();
-var PORT = process.env.PORT || 3000;
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+var notes = fs.readFileSync(path.join(__dirname, "db/db.json"), 'utf8');
+notes=JSON.parse(notes);
+const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
 //Set up routes and data handling
-app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "public/index.html"));
-  });
 app.get("/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "public/notes.html"));
   });
 app.get("/api/notes", function(req, res) {
-    res.json(fs.read(path.join(__dirname, "db/db.json")));
+    res.json(JSON.parse(fs.readFileSync(path.join(__dirname, "db/db.json"), 'utf8')));
   });
 //post
+app.post("/api/notes", function(req, res) {
+  const newNote = req.body;
+  newNote.id = notes.length;
+  notes.push(newNote);
+  let stringifiedNotes = JSON.stringify(notes);
+  fs.writeFile("db/db.json", stringifiedNotes, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+  });
+  res.json(newNote);
+});
 //delete
-
+app.delete("/api/notes/:id", function(req, res) {
+  const targetNote = req.body;
+  notes.splice(targetNote.id, 1);
+  for(let i = 0; i < notes.length; i++){
+    notes[i].id = i;
+  }
+  let stringifiedNotes = JSON.stringify(notes);
+  fs.writeFile("db/db.json", stringifiedNotes, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was deleted!");
+  });
+});
+app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "public/index.html"));
+  });
 app.listen(PORT, function() {
     console.log("App listening on PORT " + PORT);
   });  
